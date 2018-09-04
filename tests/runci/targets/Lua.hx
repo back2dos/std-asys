@@ -27,6 +27,8 @@ class Lua {
 		var server_arg = '--server=$server';
 		if (!commandSucceed("luarocks", ["show", lib, version])) {
 			runCommand("luarocks", ["install",lib, version, server_arg]);
+		} else {
+			infoMsg('Lua dependency $lib is already installed at version $version');
 		}
 	}
 
