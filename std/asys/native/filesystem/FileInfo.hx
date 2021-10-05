@@ -46,7 +46,7 @@ private typedef NativeInfo = {
 /**
 	Provides information about a file.
 **/
-@:coreApi
+
 abstract FileInfo(NativeInfo) from NativeInfo to NativeInfo {
 	/** Time of last access (Unix timestamp) */
 	public var accessTime(get,never):Int;

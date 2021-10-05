@@ -6,7 +6,7 @@ import haxe.exceptions.NotImplementedException;
 /**
 	Represents a directory.
 **/
-@:coreApi
+
 class Directory {
 	/** The path of this directory as it was at the moment of opening the directory */
 	public final path:FilePath;

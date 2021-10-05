@@ -12,7 +12,7 @@ import asys.native.system.SystemGroup;
 	Add methods for reading/writing `String` data because it may be more efficient
 	on some targets (lua) than reading/writing `haxe.io.Bytes`
 **/
-@:coreApi
+
 class File {
 	/** The path of this file as it was at the moment of opening the file **/
 	public final path:FilePath;

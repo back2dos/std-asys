@@ -9,7 +9,7 @@ private typedef NativeFilePath = Dynamic;
 
 	TODO: add API from `haxe.io.Path`
 **/
-@:coreApi abstract FilePath(NativeFilePath) {
+ abstract FilePath(NativeFilePath) {
 	/**
 		Standard directory separator character for current platform.
 		E.g. `\\` for Windows or `/` for Unix-like systems.

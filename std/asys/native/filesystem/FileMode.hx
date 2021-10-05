@@ -8,7 +8,7 @@ private typedef NativeMode = Int;
 /**
 	File mode contains file type and permissions.
 **/
-@:coreApi
+
 abstract FileMode(NativeMode) from NativeMode {
 	/** file type bit mask */
 	static inline var S_IFMT:Int = 61440;

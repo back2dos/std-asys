@@ -11,7 +11,7 @@ private typedef NativePermissions = Int;
 	Note that this is not an octal number.
 	For octal numbers use `FilePermissions.octal` method.
 **/
-@:coreApi
+
 abstract FilePermissions(NativePermissions) to NativePermissions {
 	/**
 		Returns `true` if the special bit (sticky, SETUID, SETGUID) is ignored
