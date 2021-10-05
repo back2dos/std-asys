@@ -1,0 +1,3 @@
+-lib std-asys
+-cp tests
+--run Playground

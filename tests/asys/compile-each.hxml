@@ -1,4 +1,5 @@
 --class-path src
+--library std-asys
 --main Main
 --library utest
 --dce full
