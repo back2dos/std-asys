@@ -9,8 +9,8 @@ class IoException extends Exception {
 	**/
 	public final type:IoErrorType;
 
-	public function new(type:IoErrorType, ?previous:Exception) {
-		super(type.toString(), previous);
+	public function new(type:IoErrorType, ?previous:Exception, ?native:Any) {
+		super(type.toString(), previous, native);
 		this.type = type;
 	}
 }

@@ -13,8 +13,8 @@ class FsException extends IoException {
 	**/
 	public final path:FilePath;
 
-	public function new(type:IoErrorType, path:FilePath, ?previous:Exception) {
-		super(type, previous);
+	public function new(type:IoErrorType, path:FilePath, ?previous:Exception, ?native:Any) {
+		super(type, previous, native);
 		this.path = path;
 	}
 

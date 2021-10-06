@@ -104,7 +104,7 @@ class File {
 					if(current > newSize) {
 						channel.truncate(newSize);
 					} else if(current < newSize) {
-						var buffer = ByteBuffer.allocate(Int64.toInt(newSize - current));
+						var buffer = ByteBuffer.allocate(Int64.toInt(newSize - current));// TODO: this should be capped to a max size (with multiple writes)
 						channel.write(buffer, current);
 					}
 					NoData;

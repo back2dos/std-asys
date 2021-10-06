@@ -1,7 +1,6 @@
-import asys.native.system.Process;
+import asys.native.filesystem.*;
+import haxe.io.Bytes;
 
 function main() {
-  Process.open('haxe', { args: ['-version'] }, (?e, p) -> {
-    
-  });
+  @:privateAccess FileSystem.inBackground('test', () -> 0, (_, _) -> {});
 }
