@@ -1,6 +1,6 @@
 -lib std-asys
 -cp tests
 --main Playground
-# -D jvm
+-D jvm
 --dce full
 --java bin

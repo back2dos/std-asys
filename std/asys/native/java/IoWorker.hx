@@ -11,6 +11,8 @@ import java.nio.file.*;
 import haxe.Callback;
 
 abstract IoWorker(sys.thread.IThreadPool) from sys.thread.IThreadPool {
+
+	static public final DEFAULT = new IoWorker(new sys.thread.ElasticThreadPool(2 * java.lang.Runtime.getRuntime().availableProcessors()));
 	public inline function new(t)
 		this = t;
 
@@ -72,8 +74,16 @@ abstract IoWorker(sys.thread.IThreadPool) from sys.thread.IThreadPool {
 		return new Readable(channel, this, onClose);
 	}
 
-	public function write(channel, ?onClose):IReadable {
-		return new Readable(channel, this, onClose);
+	public function readStream(stream:java.io.InputStream, ?onClose) {
+		return read(Channels.newChannel(stream), onClose);
+	}
+
+	public function write(channel, ?onClose):IWritable {
+		return new Writable(channel, this, onClose);
+	}
+
+	public function writeStream(stream:java.io.OutputStream, ?onClose) {
+		return write(Channels.newChannel(stream), onClose);
 	}
 
 	static public inline function slice(target:Bytes, offset:Int, length:Int) {
@@ -101,7 +111,7 @@ private class Readable implements IReadable {
 		worker.run(() -> {
 			channel.close();
 			switch onClose {
-				case null: 
+				case null:
 				case f: f();// TODO: not sure exceptions from here should propagate, but swalling them silently doesn't seem like a good idea
 			}
 			NoData;
@@ -128,7 +138,7 @@ private class Writable implements IWritable {
 		worker.run(() -> {
 			channel.close();
 			switch onClose {
-				case null: 
+				case null:
 				case f: f();// TODO: not sure exceptions from here should propagate, but swalling them silently doesn't seem like a good idea
 			}
 			NoData;
