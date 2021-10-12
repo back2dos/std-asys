@@ -73,12 +73,21 @@ abstract IoWorker(sys.thread.IThreadPool) from sys.thread.IThreadPool {
 		return new Readable(channel, this, onClose);
 	}
 
+	public function readFrom(channel:ReadableByteChannel, buffer, offset, length, callback) {
+		run(() -> channel.read(slice(buffer, offset, length)), callback);
+	}
+
+
 	public function readStream(stream:java.io.InputStream, ?onClose) {
 		return read(Channels.newChannel(stream), onClose);
 	}
 
 	public function write(channel, ?onClose):IWritable {
 		return new Writable(channel, this, onClose);
+	}
+
+	public function writeTo(channel:WritableByteChannel, buffer, offset, length, callback) {
+		run(() -> channel.write(slice(buffer, offset, length)), callback);
 	}
 
 	public function writeStream(stream:java.io.OutputStream, ?onClose) {
@@ -103,7 +112,7 @@ private class Readable implements IReadable {
 	}
 
 	public function read(buffer:Bytes, offset:Int, length:Int, callback:Callback<Exception, Int>) {
-		worker.run(() -> channel.read(IoWorker.slice(buffer, offset, length)), callback);
+		worker.readFrom(channel, buffer, offset, length, callback);
 	}
 
 	public function close(callback:Callback<Exception, NoData>) {
@@ -130,7 +139,7 @@ private class Writable implements IWritable {
 	}
 
 	public function write(buffer:Bytes, offset:Int, length:Int, callback:Callback<Exception, Int>) {
-		worker.run(() -> channel.write(IoWorker.slice(buffer, offset, length)), callback);
+		worker.writeTo(channel, buffer, offset, length, callback);
 	}
 
 	public function close(callback:Callback<Exception, NoData>) {

@@ -45,4 +45,7 @@ class ReadableTools {
 		readAllIntoVia(from, Bytes.alloc(0x10000), _ -> {}, to, callback);// TODO: use a pool here
 	}
 
+	static public function readAll(from:IReadable, callback:Callback<Exception, Bytes>) {
+		readAllInto(from, new BytesBuffer(), (error, buf) -> if (error == null) callback.success(buf.getBytes()) else callback.fail(error));
+	}
 }

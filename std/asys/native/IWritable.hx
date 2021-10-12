@@ -8,6 +8,7 @@ import haxe.Callback;
 /**
 	An interface to write bytes into an out-going stream of bytes.
 **/
+@:using(asys.native.IWritable.WritableTools)
 interface IWritable {
 	/**
 		Write up to `length` bytes from `buffer` (starting from buffer `offset`),
@@ -24,4 +25,11 @@ interface IWritable {
 		Close this stream.
 	**/
 	function close(callback:Callback<Exception,NoData>):Void;
+}
+
+class WritableTools {
+	static public function writeString(to:IWritable, s:String, callback:Callback<Exception,Int>) {
+		var buf = Bytes.ofString(s);// TODO: pool buffer if possible
+		to.write(buf, 0, buf.length, callback);
+	}
 }

@@ -25,7 +25,7 @@ class Process {
 		Process id.
 	**/
 	public var pid(get, never):Int;
-	function get_pid():Int throw new NotSupportedException('Getting process id');
+	function get_pid():Int throw new NotSupportedException('Getting process id not supported on Java');
 
 	/**
 		Initial IO streams opened for this process.
@@ -113,7 +113,7 @@ class Process {
 		}
 
 		if (options.user != null || options.group != null)
-			callback.fail(new NotSupportedException('Setting user or group'));// TODO: double check if there's a way
+			callback.fail(new NotSupportedException('Setting user or group not supported on java'));// TODO: double check if there's a way
 
 		if (options.detached || options.stdio != null)
 			throw new NotImplementedException();
