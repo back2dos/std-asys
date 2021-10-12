@@ -24,18 +24,25 @@ interface IReadable {
 
 class ReadableTools {
 
-	static public function readAllInto(from:IReadable, to:BytesBuffer, callback:Callback<Exception, BytesBuffer>) {
-		var via = Bytes.alloc(0x10000);// TODO: this should come from a pool
+	static public function readAllIntoVia(from:IReadable, via:Bytes, release:Bytes->Void, to:BytesBuffer, callback:Callback<Exception, BytesBuffer>) {
 		function step() {
 			from.read(via, 0, via.length, (error, read) -> switch [error, read] {
-				case [null, -1]: callback.success(to);
+				case [null, -1]:
+					release(via);
+					callback.success(to);
 				case [null, _]:
 					to.addBytes(via, 0, read);
 					step();
-				case [err, _]: callback.fail(err);
+				case [err, _]:
+					release(via);
+					callback.fail(err);
 			});
 		}
 		step();
+	}
+
+	static public function readAllInto(from:IReadable, to:BytesBuffer, callback:Callback<Exception, BytesBuffer>) {
+		readAllIntoVia(from, Bytes.alloc(0x10000), _ -> {}, to, callback);// TODO: use a pool here
 	}
 
 }
