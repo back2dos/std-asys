@@ -87,6 +87,6 @@ class Socket implements IDuplex {
 		Close the connection.
 	**/
 	public function close(callback:Callback<NoData>) {
-		throw new NotImplementedException();
+		worker.run(() -> { channel.close(); NoData; }, callback);
 	}
 }
