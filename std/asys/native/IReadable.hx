@@ -29,7 +29,9 @@ class ReadableTools {
 		function step() {
 			from.read(via, 0, via.length, (error, read) -> switch [error, read] {
 				case [null, -1]: callback.success(to);
-				case [null, _]: step();
+				case [null, _]:
+					to.addBytes(via, 0, read);
+					step();
 				case [err, _]: callback.fail(err);
 			});
 		}
