@@ -29,13 +29,14 @@ class ChildProcess extends Process {
 
 	final native:java.lang.Process;
 	final worker:asys.native.java.IoWorker;
-	public function new(native, worker) {
-		super();
+	public function new(native:java.lang.Process, worker) {
 		this.native = native;
 		this.worker = worker;
 		this.stdin = worker.writeStream(native.getOutputStream());
 		this.stdout = worker.readStream(native.getInputStream());
 		this.stderr = worker.readStream(native.getErrorStream());
+		super([Write(stdin), Read(stdout), Read(stderr)]);
+
 	}
 
 	/**

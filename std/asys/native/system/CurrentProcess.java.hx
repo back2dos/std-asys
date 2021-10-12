@@ -1,6 +1,7 @@
 package asys.native.system;
 
-import haxe.exceptions.NotImplementedException;
+import haxe.exceptions.NotSupportedException;
+import asys.native.java.IoWorker.DEFAULT as worker;
 
 /**
 	Additional API for the current process.
@@ -28,10 +29,10 @@ class CurrentProcess extends Process {
 	inline function get_stderr():IWritable return stderr;
 
 	function new() {
-		super();
-		this.stdin = asys.native.java.IoWorker.DEFAULT.readStream(java.lang.System._in);
-		this.stdout = asys.native.java.IoWorker.DEFAULT.writeStream(java.lang.System.out);
-		this.stderr = asys.native.java.IoWorker.DEFAULT.writeStream(java.lang.System.err);
+		this.stdin = worker.readStream(java.lang.System._in);
+		this.stdout = worker.writeStream(java.lang.System.out);
+		this.stderr = worker.writeStream(java.lang.System.err);
+		super([Read(stdin), Write(stdout), Write(stderr)]);
 	}
 
 	/**
@@ -46,6 +47,6 @@ class CurrentProcess extends Process {
 	**/
 	public function setSignalAction(signal:Signal, action:SignalAction):Void {
 		// see https://stackoverflow.com/questions/19711062/alternative-to-sun-misc-signal
-		throw new NotImplementedException();
+		throw NotSupportedException.field();
 	}
 }

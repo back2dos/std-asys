@@ -1,5 +1,7 @@
 package asys.native.system;
 
+import haxe.exceptions.NotSupportedException;
+import haxe.exceptions.NotImplementedException;
 import haxe.io.BytesBuffer;
 import asys.native.java.IoWorker;
 import java.util.ArrayList;
@@ -7,7 +9,6 @@ import java.lang.ProcessBuilder;
 import haxe.ds.ReadOnlyArray;
 import haxe.io.Bytes;
 import haxe.NoData;
-import haxe.exceptions.NotImplementedException;
 
 /**
 	Process execution API
@@ -23,7 +24,8 @@ class Process {
 	/**
 		Process id.
 	**/
-	public var pid:Int;
+	public var pid(get, never):Int;
+	function get_pid():Int throw new NotSupportedException('Getting process id');
 
 	/**
 		Initial IO streams opened for this process.
@@ -36,12 +38,10 @@ class Process {
 		for `asys.native.system.Process.open` call.
 		@see asys.native.system.ProcessOptions.stdio
 	**/
-	public var stdio(get,never):ReadOnlyArray<Stream>;
-	function get_stdio():ReadOnlyArray<Stream> throw new NotImplementedException();
+	public final stdio:ReadOnlyArray<Stream>;
 
-	//TODO: this is a dummy constructor to make the compiler shut up about uninitialized finals.
-	function new() {
-		pid = -1;
+	function new(stdio) {
+		this.stdio = stdio;
 	}
 
 	/**
@@ -112,6 +112,12 @@ class Process {
 			case v: pb.directory(new java.io.File(v));
 		}
 
+		if (options.user != null || options.group != null)
+			callback.fail(new NotSupportedException('Setting user or group'));// TODO: double check if there's a way
+
+		if (options.detached || options.stdio != null)
+			throw new NotImplementedException();
+
 		IoWorker.DEFAULT.run(pb.start, callback.with(ChildProcess.new.bind(_, IoWorker.DEFAULT)));
 	}
 
@@ -124,6 +130,11 @@ class Process {
 		@see asys.native.system.Signal
 	**/
 	public function sendSignal(signal:Signal, callback:Callback<NoData>) {
-		throw new NotImplementedException();
+		/*
+			TODO: signals and java don't really go together
+			It would be possible to use the host OS to do this (which seems to be the popular solution online)
+			Also, `ChildProcess` should override this to handle Terminate/Kill
+		*/
+		callback.fail(NotSupportedException.field());
 	}
 }
