@@ -1,8 +1,6 @@
-import asys.native.system.*;
 
 function main() {
-  Process.execute('haxe.cmd', { args: ['-version'] }, (?err, out) -> {
-    trace(err, out.stdout.toString(), out.stderr.toString(), out.exitCode);
+  asys.native.system.Process.execute('haxe.cmd', { args: ['-version'] }, (?err, out) -> {
+    trace('exited with ${out.exitCode}: ${out.stdout.toString()}');
   });
-  // @:privateAccess FileSystem.inBackground('test', () -> 0, (_, _) -> {});
 }
