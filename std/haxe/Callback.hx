@@ -44,4 +44,8 @@ abstract Callback<E,R>(CallbackHandler<E,R>) from CallbackHandler<E,R> {
 	public inline function success(result:R):Void {
 		this(null, result);
 	}
+
+	public inline function with<X>(f:X->R):Callback<E, X> {
+		return function (error:Null<E>, value:X) if (error == null) success(f(value)) else fail(error);
+	}
 }

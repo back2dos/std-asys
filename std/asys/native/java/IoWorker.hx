@@ -11,7 +11,6 @@ import java.nio.file.*;
 import haxe.Callback;
 
 abstract IoWorker(sys.thread.IThreadPool) from sys.thread.IThreadPool {
-
 	static public final DEFAULT = new IoWorker(new sys.thread.ElasticThreadPool(2 * java.lang.Runtime.getRuntime().availableProcessors()));
 	public inline function new(t)
 		this = t;
@@ -70,7 +69,7 @@ abstract IoWorker(sys.thread.IThreadPool) from sys.thread.IThreadPool {
 		});
 	}
 
-	public function read(channel, ?onClose):IReadable {
+	public function read(channel, ?onClose):IReadable {// TODO: consider exposing selectors
 		return new Readable(channel, this, onClose);
 	}
 

@@ -1,9 +1,8 @@
-import asys.native.filesystem.*;
-import haxe.io.Bytes;
+import asys.native.system.*;
 
 function main() {
-  asys.native.system.Process.current.stdout.write(Bytes.ofString('haha'), 0, 4, (?err, len) -> {
-    trace(err, len);
+  Process.execute('haxe.cmd', { args: ['-version'] }, (?err, out) -> {
+    trace(err, out.stdout.toString(), out.stderr.toString(), out.exitCode);
   });
   // @:privateAccess FileSystem.inBackground('test', () -> 0, (_, _) -> {});
 }

@@ -8,6 +8,7 @@ import haxe.exceptions.NotImplementedException;
 	@see asys.native.system.Process.current
 **/
 class CurrentProcess extends Process {
+	static public final INST = new CurrentProcess();
 	/**
 		A stream used by the process as standard input.
 	**/

@@ -47,12 +47,9 @@ class Process {
 		The `command` argument should not contain command line arguments. Those should
 		be passed to `options.args`
 
-		In case the command didn't emit anything to stdout or stderr, the respective
-		field of the result structure will be `null`.
-
 		@see asys.native.system.ProcessOptions for various process configuration options.
 	 */
-	static public function execute(command:String, ?options:ProcessOptions, callback:Callback<{?stdout:Bytes, ?stderr:Bytes, exitCode:Int}>) {
+	static public function execute(command:String, ?options:ProcessOptions, callback:Callback<{ stdout:Bytes, stderr:Bytes, exitCode:Int}>) {
 		throw new NotImplementedException();
 	}
 
