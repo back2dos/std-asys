@@ -83,6 +83,7 @@ private class TcpSocket extends Socket {
 	final writer:IsolatedRunner;
 
 	public function new(channel, worker) {
+		// TODO: this should really be using selectors
 		this.channel = channel;
 		this.reader = worker;
 		this.writer = worker.fork();
