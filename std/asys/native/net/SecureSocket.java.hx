@@ -1,14 +1,13 @@
 package asys.native.net;
 
-import haxe.exceptions.NotSupportedException;
 import java.javax.net.ssl.*;
 import asys.native.java.IsolatedRunner;
 import haxe.io.Bytes;
 import haxe.NoData;
 import asys.native.net.SocketOptions.SocketOptionKind;
-import haxe.exceptions.NotImplementedException;
 
 using asys.native.java.Nio;
+using asys.native.java.Sockets;
 using asys.native.java.Streams;
 
 typedef SecureSocketOptions = SocketOptions & {
@@ -35,15 +34,13 @@ class SecureSocket extends Socket {
 		}
 	}
 
-	function get_localAddress():SocketAddress {
-		throw new NotImplementedException();
-	}
+	function get_localAddress():SocketAddress
+		return socket.localAddress();
 
-	function get_remoteAddress():SocketAddress {
-		throw new NotImplementedException();
-	}
+	function get_remoteAddress():SocketAddress
+		return socket.remoteAddress();
 
-	final socket:java.net.Socket = null;
+	final socket:java.net.Socket;
 	final runner:IsolatedRunner;
 	final snd:IWritable;
 	final rcv:IReadable;
@@ -63,11 +60,30 @@ class SecureSocket extends Socket {
 		snd.write(buffer, offset, length, callback);
 	}
 
-	public function flush(callback:Callback<NoData>) {}
+	public function flush(callback:Callback<NoData>) {
+		snd.flush(callback);
+	}
 
-	public function getOption<T>(option:SocketOptionKind<T>, callback:Callback<T>) {}
+	public function getOption<T>(option:SocketOptionKind<T>, callback:Callback<T>) {
+		runner.run(() -> socket.getOption(option), callback);
+	}
 
-	public function setOption<T>(option:SocketOptionKind<T>, value:T, callback:Callback<NoData>) {}
+	public function setOption<T>(option:SocketOptionKind<T>, value:T, callback:Callback<NoData>) {
+		runner.run(() -> { socket.setOption(option, value); NoData; }, callback);
+	}
 
-	public function close(callback:Callback<NoData>) {}
+	public function close(callback:Callback<NoData>) {
+		// This triple shutdown is perhaps a little "too thorough"
+		var todos = 2;
+		function done(error, v)
+			switch error {
+				case null:
+					if (--todos == 0)
+						runner.run(() -> { socket.close(); NoData; }, callback);
+				default:
+					callback.fail(error);
+			}
+		snd.close(done);
+		rcv.close(done);
+	}
 }

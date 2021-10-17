@@ -3,7 +3,6 @@ package asys.native.filesystem;
 import haxe.Int64;
 import haxe.io.Bytes;
 import haxe.NoData;
-import haxe.exceptions.NotImplementedException;
 import haxe.exceptions.NotSupportedException;
 import asys.native.IWritable;
 import asys.native.IReadable;

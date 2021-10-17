@@ -7,8 +7,8 @@ import haxe.exceptions.NotSupportedException;
 import asys.native.net.SocketOptions.SocketOptionKind;
 import haxe.NoData;
 import haxe.io.Bytes;
-import haxe.exceptions.NotImplementedException;
 
+using asys.native.java.Sockets;
 using asys.native.java.Nio;
 
 abstract class Socket implements IDuplex {
@@ -75,8 +75,12 @@ abstract class Socket implements IDuplex {
 }
 
 private class TcpSocket extends Socket {
-	function get_localAddress():SocketAddress throw new NotImplementedException();
-	function get_remoteAddress():Null<SocketAddress> throw new NotImplementedException();
+
+	function get_localAddress():SocketAddress
+		return channel.socket().localAddress();
+
+	function get_remoteAddress():SocketAddress
+		return channel.socket().remoteAddress();
 
 	final channel:SocketChannel;
 	final reader:IsolatedRunner;
@@ -106,10 +110,10 @@ private class TcpSocket extends Socket {
 	}
 
 	public function getOption<T>(option:SocketOptionKind<T>, callback:Callback<T>) {
-		callback.fail(new NotImplementedException());
+		reader.run(() -> channel.socket().getOption(option), callback);
 	}
 
 	public function setOption<T>(option:SocketOptionKind<T>, value:T, callback:Callback<NoData>) {
-		callback.fail(new NotImplementedException());
+		reader.run(() -> { channel.socket().setOption(option, value); NoData; }, callback);
 	}
 }
