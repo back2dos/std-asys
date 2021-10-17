@@ -1,7 +1,7 @@
 package asys.native.system;
 
 import haxe.NoData;
-import haxe.exceptions.NotImplementedException;
+using asys.native.java.Streams;
 
 /**
 	Additional API for child processes spawned by the current process.
@@ -28,13 +28,14 @@ class ChildProcess extends Process {
 	inline function get_stderr():IReadable return stderr;
 
 	final native:java.lang.Process;
-	final worker:asys.native.java.IoWorker;
+	final worker:asys.native.java.IsolatedRunner;
+
 	public function new(native:java.lang.Process, worker) {
 		this.native = native;
 		this.worker = worker;
-		this.stdin = worker.writeStream(native.getOutputStream());
-		this.stdout = worker.readStream(native.getInputStream());
-		this.stderr = worker.readStream(native.getErrorStream());
+		this.stdin = worker.fork().writeStream(native.getOutputStream());
+		this.stdout = worker.fork().readStream(native.getInputStream());
+		this.stderr = worker.fork().readStream(native.getErrorStream());
 		super([Write(stdin), Read(stdout), Read(stderr)]);
 
 	}

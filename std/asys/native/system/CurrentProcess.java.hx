@@ -1,7 +1,8 @@
 package asys.native.system;
 
 import haxe.exceptions.NotSupportedException;
-import asys.native.java.IoWorker.DEFAULT as worker;
+import asys.native.java.IsolatedRunner;
+using asys.native.java.Streams;
 
 /**
 	Additional API for the current process.
@@ -29,9 +30,9 @@ class CurrentProcess extends Process {
 	inline function get_stderr():IWritable return stderr;
 
 	function new() {
-		this.stdin = worker.readStream(java.lang.System._in);
-		this.stdout = worker.writeStream(java.lang.System.out);
-		this.stderr = worker.writeStream(java.lang.System.err);
+		this.stdin = IsolatedRunner.create().readStream(java.lang.System._in);
+		this.stdout = IsolatedRunner.create().writeStream(java.lang.System.out);
+		this.stderr = IsolatedRunner.create().writeStream(java.lang.System.err);
 		super([Read(stdin), Write(stdout), Write(stderr)]);
 	}
 

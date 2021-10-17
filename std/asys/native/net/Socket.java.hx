@@ -1,6 +1,6 @@
 package asys.native.net;
 
-import asys.native.java.IoWorker;
+import asys.native.java.IsolatedRunner;
 import java.net.InetSocketAddress;
 import java.nio.channels.SocketChannel;
 import haxe.exceptions.NotSupportedException;
@@ -8,6 +8,8 @@ import asys.native.net.SocketOptions.SocketOptionKind;
 import haxe.NoData;
 import haxe.io.Bytes;
 import haxe.exceptions.NotImplementedException;
+
+using asys.native.java.Nio;
 
 abstract class Socket implements IDuplex {
 	/**
@@ -28,7 +30,7 @@ abstract class Socket implements IDuplex {
 	static public function connect(address:SocketAddress, ?options:SocketOptions, callback:Callback<Socket>) {
 		switch address {
 			case Net(host, port):
-				var worker = IoWorker.DEFAULT;
+				var worker = IsolatedRunner.POOL.createRunner();
 				worker.run(() -> {
 					var sock = SocketChannel.open(new InetSocketAddress(host, port));
 					sock.configureBlocking(false);// right?
@@ -77,19 +79,21 @@ private class TcpSocket extends Socket {
 	function get_remoteAddress():Null<SocketAddress> throw new NotImplementedException();
 
 	final channel:SocketChannel;
-	final worker:IoWorker;
+	final reader:IsolatedRunner;
+	final writer:IsolatedRunner;
 
 	public function new(channel, worker) {
 		this.channel = channel;
-		this.worker = worker;
+		this.reader = worker;
+		this.writer = worker.fork();
 	}
 
 	public function read(buffer:Bytes, offset:Int, length:Int, callback:Callback<Int>) {
-		worker.readFrom(channel, buffer, offset, length, callback);
+		reader.readFrom(channel, buffer, offset, length, callback);
 	}
 
 	public function write(buffer:Bytes, offset:Int, length:Int, callback:Callback<Int>) {
-		worker.writeTo(channel, buffer, offset, length, callback);
+		writer.writeTo(channel, buffer, offset, length, callback);
 	}
 
 	public function flush(callback:Callback<NoData>):Void {
@@ -97,7 +101,7 @@ private class TcpSocket extends Socket {
 	}
 
 	public function close(callback:Callback<NoData>) {
-		worker.run(() -> { channel.close(); NoData; }, callback);
+		reader.run(() -> { channel.close(); NoData; }, callback);
 	}
 
 	public function getOption<T>(option:SocketOptionKind<T>, callback:Callback<T>) {

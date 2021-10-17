@@ -30,6 +30,8 @@ class ReadableTools {
 				case [null, -1]:
 					release(via);
 					callback.success(to);
+				case [null, 0]:
+					step();// TODO: may want to delay this or something
 				case [null, _]:
 					to.addBytes(via, 0, read);
 					step();

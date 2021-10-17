@@ -3,7 +3,6 @@ package asys.native.system;
 import haxe.exceptions.NotSupportedException;
 import haxe.exceptions.NotImplementedException;
 import haxe.io.BytesBuffer;
-import asys.native.java.IoWorker;
 import java.util.ArrayList;
 import java.lang.ProcessBuilder;
 import haxe.ds.ReadOnlyArray;
@@ -118,7 +117,8 @@ class Process {
 		if (options.detached || options.stdio != null)
 			throw new NotImplementedException();
 
-		IoWorker.DEFAULT.run(pb.start, callback.with(ChildProcess.new.bind(_, IoWorker.DEFAULT)));
+		var runner = asys.native.java.IsolatedRunner.create();
+		runner.run(pb.start, callback.with(ChildProcess.new.bind(_, runner)));
 	}
 
 	/**
